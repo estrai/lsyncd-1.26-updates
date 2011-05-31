@@ -234,6 +234,9 @@ char * default_exclude_file = NULL;
 struct call_option standard_callopts[] = {
 	{ CO_TEXT,    "-lt%r"    },
 	{ CO_TEXT,    "--delete" },
+	{ CO_TEXT,    "--cvs-exclude" },
+	{ CO_TEXT,    "--include=*.so" },
+	{ CO_TEXT,    "--include=*.tmpl" },
 	{ CO_EXCLUDE, NULL       },
 	{ CO_SOURCE,  NULL       },
 	{ CO_DEST,    NULL       },
