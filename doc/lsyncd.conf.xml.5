@@ -1,0 +1,218 @@
+.\"     Title: LSYNCD.CONF.XML
+.\"    Author: Axel Kittenberger <axel.kittenberger@univie.ac.at>
+.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
+.\"      Date: 01/05/2009
+.\"    Manual: lsyncd User Manual
+.\"    Source: lsyncd
+.\"
+.TH "LSYNCD\&.CONF\&.XML" "5" "01/05/2009" "lsyncd" "lsyncd User Manual"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+lsyncd.conf.xml \- xconfig file for lsyncd
+.SH "DESCRIPTION"
+.PP
+\fIlsyncd\&.conf\&.xml\fR
+is used to configure the
+\fBlsyncd\fR
+daemon\&.
+.PP
+Note that any command line options can overrule settings in the config file\&. A
+\fBlsyncd\fR
+configuration file has an XML grammar\&. That means tags have to be closed with a / and the such\&. Following explanations will be provided with an examples\&.
+.PP
+The config file must start with a
+\fB<lsyncd>\fR
+root node\&. A "version" parameter has to be present which specifies the lsyncd version of the config file format\&. Currently this is 1\&.
+.sp
+.RS 4
+.nf
+<lsyncd version="1">
+.fi
+.RE
+.SS "SETTINGS"
+.PP
+Next is optionally a
+\fB<settings>\fR
+node\&. It controls lsyncd global settings\&. All settings are optional\&.
+.sp
+.RS 4
+.nf
+  <settings>
+.fi
+.RE
+.PP
+If a
+\fB<debug/>\fR
+node is present all debug messages will be logged\&. Default is a normal verbosity\&.
+.sp
+.RS 4
+.nf
+    <debug/>
+.fi
+.RE
+.PP
+If a
+\fB<scarce>\fR
+node is present only error messages will be logged\&. Default is a normal verbosity\&.
+.sp
+.RS 4
+.nf
+    <scarce/>
+.fi
+.RE
+.PP
+If a
+\fB<stubborn>\fR
+node is present lsyncd will continue even if the startup sync fails\&. Default is being not stubborn\&.
+.sp
+.RS 4
+.nf
+    <stubborn/>
+.fi
+.RE
+.PP
+If a
+\fB<no\-daemon>\fR
+node is present lsyncd will not detach and log to stdout/stderr\&. Default is to detach as daemon\&.
+.sp
+.RS 4
+.nf
+    <no\-daemon/>
+.fi
+.RE
+.PP
+If a
+\fB<dry\-run>\fR
+node is present lsyncd will not call any actions (rsync) for test purposes\&. Default is not to run dry\&.
+.sp
+.RS 4
+.nf
+    <dry\-run/>
+.fi
+.RE
+.PP
+With an
+\fB<exclude\-from>\fR
+entry an exclusion file can be specified with a "filename" parameter\&. This will be passed to rsync and follows rsyncs grammar for exclude files\&. Default is not to pass an exlude file to rsync\&.
+.sp
+.RS 4
+.nf
+    <exclude\-from filename="/etc/lsyncd\&.exclude"/>
+.fi
+.RE
+.PP
+With a
+\fB<logfile>\fR
+node to location of the logfile can be changed\&. Default is
+\fI/var/log/lsyncd\fR\&. Take care that the user which lsyncd is running with can write to this file\&.
+.sp
+.RS 4
+.nf
+    <logfile filename="/var/log/lsyncd"/>
+.fi
+.RE
+.PP
+A
+\fB<binary>\fR
+node specifies the binary lsyncd will call to sync stuff\&. Usually you want this to be rsync\&. Default is
+\fI/usr/bin/rsync\fR\&.
+.sp
+.RS 4
+.nf
+    <binary filename="/usr/bin/rsync"/>
+.fi
+.RE
+.PP
+If a
+\fB<pidfile>\fR
+node is present lsyncd will write its pid there\&. Default is not to write a pidfile\&.
+.sp
+.RS 4
+.nf
+    <pidfile filename="/var/run/lsyncd\&.pid"/>
+.fi
+.RE
+.PP
+With a
+\fB<callopts>\fR
+node you can control the arguments lsyncd will call the <binary> (rsync) with\&. Each child node will specify one argument\&. <option> specifies a literal argument\&. Only %r will be replaced with \'r\' when rsycnd is supposed to work recursive (on startup of lsyncd) or \'d\' on normal operations\&. <exclude\-file> will be replaced with
+\fB\-\-exclude\-from [FILE]\fR
+if an <exclude\-from> file is specified\&. <source> will be replaced the source directory to sync from\&. <destination> will be replace to the target to sync to\&. Default arguments are
+\fB\-lt%r \-\-delete {\-\-exclude\-from [FILE]} [SOURCE] [DIRECTORY]\fR\&.
+.sp
+.RS 4
+.nf
+    <callopts>
+        <option text="\-lt%r"/>
+        <option text="\-\-delete"/>
+        <exclude\-file/>
+        <source/>
+        <destination/>
+    </callopts>
+.fi
+.RE
+.PP
+End of (optional) settings section\&.
+.sp
+.RS 4
+.nf
+  </settings>
+.fi
+.RE
+.SS "DIRECTORIES"
+.PP
+With
+\fB<directory>\fR
+nodes arbitrarily many sources to be watched can be specified\&. Within a <directory> entry you can again specify a
+\fB<binary>\fR,
+\fB<exclude\-from>\fR
+or a
+\fB<callopt>\fR
+node which will override global settings just for this source\&. See SETTINGS for details on this options\&.
+.PP
+The mandatory
+\fB<source>\fR
+node specifies with the paramater "path" the directory to watch and sync\&. (once in a while something is mandatory\&. Also at least one
+\fB<target;>\fR
+node has to specified where to sync to\&. This has to be a format accepted by rsync\&.
+.sp
+.RS 4
+.nf
+  <directory>
+    <source path="/absolute/path/to/source"/>
+    <target path="desthost::module/"/>
+  </directory>
+.fi
+.RE
+.PP
+End of a
+\fIlsyncd\&.conf\&.xml\fR
+file\&.
+.sp
+.RS 4
+.nf
+</lsyncd>
+.fi
+.RE
+.SH "FILES"
+.PP
+\fI/etc/lsyncd\&.conf\&.xml\fR
+.RS 4
+The default location of the configuration file\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBlsyncd\fR(1)
+.SH "AUTHOR"
+.PP
+\fBAxel Kittenberger\fR <\&axel\&.kittenberger@univie\&.ac\&.at\&>
+.sp -1n
+.IP "" 4
+Author.
+.SH "COPYRIGHT"
+.PP
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation\&.
+.sp

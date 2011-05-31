@@ -1,0 +1,190 @@
+.\"     Title: LSYNCD
+.\"    Author: Junichi Uekawa <dancer@debian.org>
+.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
+.\"      Date: 01/05/2009
+.\"    Manual: lsyncd User Manual
+.\"    Source: lsyncd
+.\"
+.TH "LSYNCD" "1" "01/05/2009" "lsyncd" "lsyncd User Manual"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+lsyncd \- A rsync-based tool to monitor a directory including subdirectories and update modifications.
+.SH "SYNOPSIS"
+.HP 7
+\fBlsyncd\fR [\fB\-\-binary\ \fR\fBFILE\fR] [\fB\-\-conf\ \fR\fBFILE\fR] [\fB\-\-debug\fR] [\fB\-\-dryrun\fR] [\fB\-\-exclude\-file\ \fR\fBFILE\fR] [\fB\-\-logfile\ \fR\fBFILE\fR] [\fB\-\-no\-daemon\fR] [\fB\-\-pidfile\ \fR\fBFILE\fR] [\fB\-\-scarce\fR] [\fB\-\-stubborn\fR] [\fIsource\fR] [\fItarget\&.\&.\&.\fR]
+.HP 7
+\fBlsyncd\fR [{\fB\-\-help\fR} | {\fB\-\-version\fR}]
+.SH "DESCRIPTION"
+.PP
+\fBlsyncd\fR
+is a program that uses rsync to synchronize local directories with a or several remote machine(s) running rsyncd\&. Lsyncd watches multiple directory trees through inotify\&. On startup it will rsync all directories with the remote host(s), and then sync single directories by collecting the inotify events\&. This tool is a light\-weight live mirror solution\&.
+.SH "OPTIONS"
+.PP
+The program takes options starting with two dashes (`\-\')\&. A summary of options is included below\&.
+.PP
+\fB\-\-binary \fR\fB\fIFILE\fR\fR
+.RS 4
+Call this binary to sync (DEFAULT: /usr/bin/rsync)\&.
+.RE
+.PP
+\fB\-\-conf \fR\fB\fIFILE\fR\fR
+.RS 4
+config file to read config from\&. See
+\fBlsyncd.conf.xml\fR(5)
+.sp
+Default:
+\fI/etc/lsyncd\&.conf\&.xml\fR
+if no
+\fBsource\fR,
+\fBtarget\fR
+is given in the commandline\&. If they are given and
+[\-\-conf]
+is not given no config file will be loaded\&.
+.RE
+.PP
+\fB\-\-debug\fR
+.RS 4
+Log debug messages
+.RE
+.PP
+\fB\-\-dryrun\fR
+.RS 4
+Do not call rsync, run dry only
+.RE
+.PP
+\fB\-\-exclude\-file \fR\fB\fIFILE\fR\fR
+.RS 4
+Exclude file handlet to rsync (DEFAULT: None)\&.
+.RE
+.PP
+\fB\-\-logfile \fR\fB\fIFILE\fR\fR
+.RS 4
+Put log here (DEFAULT: /var/log/lsyncd)\&.
+.RE
+.PP
+\fB\-\-no\-daemon\fR
+.RS 4
+Do not detach, log to stdout/stderr\&.
+.RE
+.PP
+\fB\-\-pidfile \fR\fB\fIFILE\fR\fR
+.RS 4
+Create a file with pid of application\&.
+.RE
+.PP
+\fB\-\-scarce\fR
+.RS 4
+Only log errors\&.
+.RE
+.PP
+\fB\-\-stubborn\fR
+.RS 4
+Continue even if startup sync fails\&.
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Show summary of options\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Show version of program\&.
+.RE
+.SH "FILES"
+.PP
+\fI/etc/lsyncd\&.conf\&.xml\fR
+.RS 4
+The default location of configuration file\&.
+.RE
+.PP
+\fI/var/log/lsyncd\fR
+.RS 4
+The default location of log file\&. Make sure the running user has write access to this file, or specify a different log file name\&.
+.RE
+.SH "DIAGNOSTICS"
+.PP
+\fBlsyncd\fR
+provides some return codes, that can be used in scripts:
+.\" line length increase to cope w/ tbl weirdness
+.ll +(\n(LLu * 62u / 100u)
+.TS
+ll.
+\fICode\fR	\fIDiagnostic\fR
+T{
+\fB0\fR
+T}	T{
+Program exited successfully\&.
+T}
+T{
+\fB1\fR
+T}	T{
+Out of memory\&.
+T}
+T{
+\fB2\fR
+T}	T{
+File was not found, or failed to write\&.
+T}
+T{
+\fB3\fR
+T}	T{
+binary (most likely rsync) returned non\-zero result on startup\&.
+T}
+T{
+\fB4\fR
+T}	T{
+Something wrong the command\-line arguments in the lsyncd invocation\&.
+T}
+T{
+\fB5\fR
+T}	T{
+Too many exclude files were specified\&.
+T}
+T{
+\fB6\fR
+T}	T{
+Something wrong with the config file\&.
+T}
+T{
+\fB7\fR
+T}	T{
+Kernel cannot do inotify\&.
+T}
+T{
+\fB255\fR
+T}	T{
+Internal failure\&.
+T}
+.TE
+.\" line length decrease back to previous value
+.ll -(\n(LLu * 62u / 100u)
+.sp
+.SH "SEE ALSO"
+.PP
+
+\fBlsyncd.conf.xml\fR(5)
+\fBrsync\fR(1)
+.PP
+The programs are documented fully in README file available in
+\fI/usr/share/doc/lsyncd/README\&.gz\fR\&.
+.SH "AUTHORS"
+.PP
+\fBJunichi Uekawa\fR <\&dancer@debian\&.org\&>
+.sp -1n
+.IP "" 4
+Wrote this manpage for the Debian system\&.
+.PP
+\fBAxel Kittenberger\fR <\&axel\&.kittenberger@univie\&.ac\&.at\&>
+.sp -1n
+.IP "" 4
+Strives to keep this up to date\&.
+.SH "COPYRIGHT"
+Copyright \(co 2008 Junichi Uekawa, Axel Kittenberger
+.br
+.PP
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 2 or (at your option) any later version published by the Free Software Foundation\&.
+.sp
